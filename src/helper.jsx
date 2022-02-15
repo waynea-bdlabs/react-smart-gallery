@@ -1,12 +1,14 @@
 import React from 'react';
-import Layouts from './layouts.js'
+import Layouts from './layouts.js';
+import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
+import {KEY_TO_COMPARE} from './index';
 
 const Helper = {
 
   getOneImageLayout(images, style, onImageSelect) {
     return (
       <div style={Object.assign({}, style.root, {height: 'auto'})}>
-        <img onClick={(e) => onImageSelect && onImageSelect(e, images[0].src, 0)} src={images[0].src} style={Object.assign({}, style.img,  {width: '100%'})} />
+        <img onClick={(e) => onImageSelect && onImageSelect(e, images[0][KEY_TO_COMPARE], 0)} src={images[0].src} style={Object.assign({}, style.img,  {width: '100%'})} />
       </div>
     )
   },
@@ -30,8 +32,8 @@ const Helper = {
 
     return (
       <div style={{ ...style.root, height: 'auto', overflow: 'hidden' }}>
-        <div onClick={(e) => onImageSelect && onImageSelect(e, images[0].src, 0)} key={1} style={img1Style} />
-        <div onClick={(e) => onImageSelect && onImageSelect(e, images[1].src, 1)} key={2} style={img2Style} />
+        <div onClick={(e) => onImageSelect && onImageSelect(e, images[0][KEY_TO_COMPARE], 0)} key={1} style={img1Style} />
+        <div onClick={(e) => onImageSelect && onImageSelect(e, images[1][KEY_TO_COMPARE], 1)} key={2} style={img2Style} />
       </div>
     )
   },
@@ -59,14 +61,16 @@ const Helper = {
       let height = `${params[index].height}%`;
       let backgroundImage = `url(${images[best.pos[index]].src})`;
       let styl = Object.assign({}, style.img, {width, height, backgroundImage})
-      return <div onClick={(e) => onImageSelect && onImageSelect(e, images[best.pos[index]].src, best.pos[index])} key={index} style={styl}></div>
+      return <div onClick={(e) => onImageSelect && onImageSelect(e, images[best.pos[index]][KEY_TO_COMPARE], best.pos[index])} key={index} style={styl}></div>
     })
     return <div style={style.root}>{preparedImages}</div>
   },
 
   getFourImageLayout(images, style, remainingImages, onImageSelect) {
+    console.log('getFourImageLayout images: ',images);
     let best = { layout: 1, pos: [0,1,2,3]}
     best.score = Layouts['_l4_1'].getScore(images);
+
     for (let i = 2; i < 4; i++) {
       for (let j = 0; j < 4; j++) {
         let w = j % 4;
@@ -83,12 +87,24 @@ const Helper = {
     let preparedImages = [0,1,2,3].map((index) => {
       let width = `${params[index].width}%`;
       let height = `${params[index].height}%`;
-      let backgroundImage = `url(${images[best.pos[index]].src})`;
+      let item = images[best.pos[index]];
+      let backgroundImage = `url(${item.src})`;
       let styl = Object.assign({}, style.img, {width, height, backgroundImage})
       let showMore = index == 3 && remainingImages && remainingImages.length
 
-      return <div key={index} onClick={(e) => onImageSelect && onImageSelect(e, images[best.pos[index]].src, best.pos[index])} style={styl}>{showMore ? <div style={style.more}>+ {remainingImages.length}</div> : null}</div>
+      return (
+            <div key={index}
+                 onClick={(e) => onImageSelect && onImageSelect(e, item[KEY_TO_COMPARE], best.pos[index])}
+                 style={{
+                   position: 'relative',
+                   ...styl,
+                 }}>
+              {!showMore && item.video ? <PlayCircleFilledIcon style={style.playIcon} /> : null}
+              {showMore ? <div style={style.more}>+ {remainingImages.length}</div> : null}
+            </div>
+      );
     })
+
     return <div style={style.root}>{preparedImages}</div>
   },
 
