@@ -1,14 +1,24 @@
 import React from 'react';
 import Layouts from './layouts.js';
 import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
-import {KEY_TO_COMPARE} from './index';
+import {KEY_TO_COMPARE} from "./constants";
 
 const Helper = {
 
   getOneImageLayout(images, style, onImageSelect) {
+    const item = images[0];
     return (
-      <div style={Object.assign({}, style.root, {height: 'auto'})}>
-        <img onClick={(e) => onImageSelect && onImageSelect(e, images[0][KEY_TO_COMPARE], 0)} src={images[0].src} style={Object.assign({}, style.img,  {width: '100%'})} />
+      <div style={Object.assign(style.flexContainer, style.root, {position: 'relative', height: 'auto'})}>
+        {
+          item.video &&
+          (
+              <div style={{position: 'absolute'}}>
+                <PlayCircleFilledIcon style={style.playIcon} />
+              </div>
+          )
+        }
+        <img onClick={(e) => onImageSelect && onImageSelect(e, item[KEY_TO_COMPARE], 0)} src={images[0].src}
+             style={Object.assign({}, style.img,  {width: '100%'})} />
       </div>
     )
   },
@@ -30,10 +40,43 @@ const Helper = {
       img2Style.width = params[1].width + '%';
     }
 
+    const firstItem = images[0];
+    const secondItem = images[1];
+
     return (
-      <div style={{ ...style.root, height: 'auto', overflow: 'hidden' }}>
-        <div onClick={(e) => onImageSelect && onImageSelect(e, images[0][KEY_TO_COMPARE], 0)} key={1} style={img1Style} />
-        <div onClick={(e) => onImageSelect && onImageSelect(e, images[1][KEY_TO_COMPARE], 1)} key={2} style={img2Style} />
+      <div style={{ ...style.root, ...style.flexContainer, height: 'auto', overflow: 'hidden' }}>
+        <div onClick={(e) => onImageSelect && onImageSelect(e, firstItem[KEY_TO_COMPARE], 0)} key={1} style={{...img1Style, ...style.flexContainer, position: 'relative'}}>
+          {
+            firstItem.video &&
+            (
+                <div style={{
+                  position: 'absolute',
+                  width: '100%',
+                  top: 0,
+                  height: '100%',
+                  ...style.flexContainer,
+                }}>
+                  <PlayCircleFilledIcon style={style.playIcon} />
+                </div>
+            )
+          }
+        </div>
+        <div onClick={(e) => onImageSelect && onImageSelect(e, secondItem[KEY_TO_COMPARE], 1)} key={2} style={{...img2Style, ...style.flexContainer, position: 'relative'}}>
+          {
+            secondItem.video &&
+            (
+                <div style={{
+                  position: 'absolute',
+                  width: '100%',
+                  top: 0,
+                  height: '100%',
+                  ...style.flexContainer,
+                }}>
+                  <PlayCircleFilledIcon style={style.playIcon} />
+                </div>
+            )
+          }
+        </div>
       </div>
     )
   },
@@ -57,17 +100,38 @@ const Helper = {
     let params = Layouts[`_l3_${best.layout}`].getParams();
 
     let preparedImages = [0,1,2].map((index) => {
+      let item = images[best.pos[index]];
       let width = `${params[index].width}%`;
       let height = `${params[index].height}%`;
-      let backgroundImage = `url(${images[best.pos[index]].src})`;
+      let backgroundImage = `url(${item.src})`;
       let styl = Object.assign({}, style.img, {width, height, backgroundImage})
-      return <div onClick={(e) => onImageSelect && onImageSelect(e, images[best.pos[index]][KEY_TO_COMPARE], best.pos[index])} key={index} style={styl}></div>
+      return (
+          <div onClick={(e) => onImageSelect && onImageSelect(e, item[KEY_TO_COMPARE], best.pos[index])} key={index}
+               style={{
+                 ...styl,
+                 position: 'relative',
+               }}>
+            {
+              item.video &&
+              (
+                  <div style={{
+                    position: 'absolute',
+                    width: '100%',
+                    top: 0,
+                    height: '100%',
+                    ...style.flexContainer,
+                  }}>
+                    <PlayCircleFilledIcon style={style.playIcon} />
+                  </div>
+              )
+            }
+          </div>
+      );
     })
-    return <div style={style.root}>{preparedImages}</div>
+    return <div style={{...style.root}}>{preparedImages}</div>
   },
 
   getFourImageLayout(images, style, remainingImages, onImageSelect) {
-    console.log('getFourImageLayout images: ',images);
     let best = { layout: 1, pos: [0,1,2,3]}
     best.score = Layouts['_l4_1'].getScore(images);
 

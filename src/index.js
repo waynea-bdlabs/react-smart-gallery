@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Helper from './helper.jsx';
+import Helper from './helper.js';
 import {findIndex, find} from 'lodash';
-
-const DEFAULT_WIDTH  = 500;
-const DEFAULT_HEIGHT = 500;
-const MAX_IMAGES = 4; // currently supprt layout upto 4 images
-
-export const KEY_TO_COMPARE = 'number';
-export const IMAGE_SOURCE_KEY = 'thumbnail';
+import {
+  DEFAULT_HEIGHT,
+  DEFAULT_WIDTH,
+  IMAGE_SOURCE_KEY,
+  KEY_TO_COMPARE,
+  MAX_IMAGES,
+} from "./constants";
 
 class ImageStory extends React.Component {
 
@@ -121,8 +121,6 @@ class ImageStory extends React.Component {
     let { onImageSelect } = this.props;
     style.img.cursor = onImageSelect ? 'pointer' : null;
 
-    console.log('getArrangedItems items: ',items);
-
     switch (items.length) {
       case 1: result = Helper.getOneImageLayout(items.slice(0, 1), style, onImageSelect);   break;
       case 2: result = Helper.getTwoImageLayout(items.slice(0, 2), style, onImageSelect);   break;
@@ -143,6 +141,11 @@ class ImageStory extends React.Component {
         width: width || DEFAULT_WIDTH,
         height: height || DEFAULT_HEIGHT,
       },
+      flexContainer: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
       img: {
         boxSizing: 'border-box',
         border: 'solid 2px #fff',
@@ -150,6 +153,9 @@ class ImageStory extends React.Component {
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center',
+
+        // maxHeight: '380px',
+        maxWidth: '640px',
 
         display: 'flex',
         alignItems: 'center',
