@@ -1,7 +1,34 @@
 import React from 'react';
 import Layouts from './layouts.js';
+import Typography from '@material-ui/core/Typography';
 import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
-import {KEY_TO_COMPARE} from "./constants";
+import {CAPTION_KEY, KEY_TO_COMPARE} from "./constants";
+import companyIcon from './crowdpush_icon.png';
+
+function Caption({text}) {
+  return (
+      <section style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        padding: '8px 12px',
+        color: 'rgba(255,255,255,0.85)',
+        backgroundColor: 'rgba(0, 0, 0, .4)',
+        display: 'flex',
+        alignItems: 'center',
+      }}>
+        <img src={companyIcon}
+             style={{maxWidth: '21px'}} />
+        <Typography variant="body2"
+                    color="inherit"
+                    noWrap={true}
+                    style={{
+                      margin: '0 0 0 8px',
+                    }}>{text}</Typography>
+      </section>
+  );
+}
 
 const Helper = {
 
@@ -9,6 +36,10 @@ const Helper = {
     const item = images[0];
     return (
       <div style={Object.assign(style.flexContainer, style.root, {position: 'relative', height: 'auto'})}>
+        {
+          item[CAPTION_KEY] &&
+          <Caption text={item[CAPTION_KEY]} />
+        }
         {
           item.video &&
           (
@@ -45,7 +76,13 @@ const Helper = {
 
     return (
       <div style={{ ...style.root, ...style.flexContainer, height: 'auto', overflow: 'hidden' }}>
-        <div onClick={(e) => onImageSelect && onImageSelect(e, firstItem[KEY_TO_COMPARE], 0)} key={1} style={{...img1Style, ...style.flexContainer, position: 'relative'}}>
+        <div onClick={(e) => onImageSelect && onImageSelect(e, firstItem[KEY_TO_COMPARE], 0)}
+             key={1}
+             style={{...img1Style, ...style.flexContainer, position: 'relative'}}>
+          {
+            firstItem[CAPTION_KEY] &&
+            <Caption text={firstItem[CAPTION_KEY]} />
+          }
           {
             firstItem.video &&
             (
@@ -61,7 +98,13 @@ const Helper = {
             )
           }
         </div>
-        <div onClick={(e) => onImageSelect && onImageSelect(e, secondItem[KEY_TO_COMPARE], 1)} key={2} style={{...img2Style, ...style.flexContainer, position: 'relative'}}>
+        <div onClick={(e) => onImageSelect && onImageSelect(e, secondItem[KEY_TO_COMPARE], 1)}
+             key={2}
+             style={{...img2Style, ...style.flexContainer, position: 'relative'}}>
+          {
+            secondItem[CAPTION_KEY] &&
+            <Caption text={secondItem[CAPTION_KEY]} />
+          }
           {
             secondItem.video &&
             (
@@ -111,6 +154,10 @@ const Helper = {
                  ...styl,
                  position: 'relative',
                }}>
+            {
+              item[CAPTION_KEY] &&
+              <Caption text={item[CAPTION_KEY]} />
+            }
             {
               item.video &&
               (
@@ -163,6 +210,10 @@ const Helper = {
                    position: 'relative',
                    ...styl,
                  }}>
+              {
+                (item[CAPTION_KEY] && !showMore) &&
+                <Caption text={item[CAPTION_KEY]} />
+              }
               {!showMore && item.video ? <PlayCircleFilledIcon style={style.playIcon} /> : null}
               {showMore ? <div style={style.more}>+ {remainingImages.length}</div> : null}
             </div>
